@@ -14,6 +14,7 @@
 - Frontend checks: lint passed with 0 errors and 54 formatting warnings; 3 tests passed; production build passed; npm audit reports 0 vulnerabilities
 - Browser Boston and Miami checks: passed on ports 5174/8010; details recorded in `report.md`
 - Manual user review: approved on 2026-09-10; commit and push authorized
+- Submission report: updated to the required format with repository-hosted Boston and Miami screenshots
 
 ## Reference/data notes
 
