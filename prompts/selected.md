@@ -1,7 +1,7 @@
 # Selected prompts
 
-- Implement Part 1 with Vue, Python, and FastAPI in separate frontend/backend folders.
-- Review the supplied data README and CSVs first; join hotels and trips on `hotel_id` and search by city.
-- Provide a labeled results table, clear empty-input handling, and a clear no-results message.
-- Follow CHECK -> TAKE ACTION -> VERIFY for dependencies, add automated checks, and do not commit or push before manual review.
-- Verify a successful city search and a no-results city search in the browser, then record expected and observed results in `report.md`.
+- Implement Part 2 with SQLite-backed reads and writes after one-time seeding; preserve existing IDs and saved changes across restarts.
+- Keep Vue in `frontend/` and FastAPI/Python in `backend/`; route every CRUD action through the frontend and API.
+- Search by hotel name, simulate booking creation, read history, cancel by retaining and updating the record, and delete a test booking.
+- Use a persistent sequence for unique new booking IDs and test CRUD plus restart persistence in a temporary database.
+- Follow CHECK → TAKE ACTION → VERIFY for dependencies, update project context, and do not commit, merge, or push before manual review.

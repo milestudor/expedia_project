@@ -1,14 +1,13 @@
-# Expedia Lite — Part 1
+# Expedia Lite — Part 2
 
-A small city-search application built with Vue 3, FastAPI, and the supplied fictional Expedia Lite CSV data.
+A Vue 3 and FastAPI travel app with durable SQLite hotel search and booking CRUD.
 
 ## Structure
 
-- `frontend/`: Vue/Vite browser interface
-- `backend/`: FastAPI service, CSV data, and backend tests
-- `docs/design.md`: concise design decisions
-- `prompts/`: selected implementation prompts
-- `handoffs/current.md`: current implementation and verification status
+- `frontend/`: search, simulated booking, booking history, cancellation, and test deletion
+- `backend/`: FastAPI routes, SQLite data access, seed CSVs, and backend tests
+- `backend/data/`: original hotels/trips plus starter users/bookings; the generated database is ignored by Git
+- `docs/design.md`, `prompts/selected.md`, and `handoffs/current.md`: concise project context
 
 ## Setup
 
@@ -21,25 +20,24 @@ cd frontend
 npm install
 ```
 
-No environment variables are required. By default the frontend calls `/api`, which Vite proxies to `http://127.0.0.1:8000` during development.
-Set `VITE_API_TARGET` only when the backend must use a different local port.
+SQLite is included with Python, so Part 2 adds no dependency. The frontend uses Vite's `/api` proxy to `http://127.0.0.1:8000` by default.
 
 ## Run
 
-From the repository root, start the backend:
+Start the backend from the repository root:
 
 ```sh
 backend/.venv/bin/python -m uvicorn backend.app.main:app --reload --port 8000
 ```
 
-In a second terminal, start the frontend:
+In a second terminal:
 
 ```sh
 cd frontend
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`.
+Open `http://127.0.0.1:5173`. The first backend start creates `backend/data/expedia_lite.db` and seeds empty tables. Later starts retain saved changes. For an intentional reset, stop the backend, delete only that database file, and restart.
 
 ## Checks
 
@@ -47,7 +45,8 @@ Open `http://127.0.0.1:5173`.
 backend/.venv/bin/python -m pytest backend/tests
 cd frontend
 npm run test
+npm run lint
 npm run build
 ```
 
-Expected sample checks: `Boston` returns 4 stays (`T001`, `T002`, `T009`, `T010`); `Miami` returns none.
+The backend tests create, read, cancel, delete, and reopen a temporary database to verify persistence and non-duplicating seeds.

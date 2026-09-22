@@ -2,21 +2,23 @@
 
 ## Implemented
 
-- FastAPI CSV-backed stay search at `GET /api/stays?city=...`
-- Case-insensitive hotel/trip join through `hotel_id`
-- Vue city search with loading, validation, results, error, and no-results states
-- Backend and frontend automated checks
+- Feature branch: `codex/part-2-sqlite-crud`; Part 1 checkpoint remains in history
+- One-time SQLite seeding for hotels, trips, starter users, and starter bookings
+- SQLite-backed hotel-name/city search and complete booking CRUD through FastAPI
+- Vue booking creation, history, cancellation with record retention, and test deletion
+- Persistent, never-reused booking IDs beyond seeded examples
 
 ## Verification status
 
-- Dependency installation: complete in `backend/.venv` and `frontend/node_modules`; lockfile generated
-- Backend tests: 3 passed
-- Frontend checks: lint passed with 0 errors and 54 formatting warnings; 3 tests passed; production build passed; npm audit reports 0 vulnerabilities
-- Browser Boston and Miami checks: passed on ports 5174/8010; details recorded in `report.md`
-- Manual user review: approved on 2026-09-10; commit and push authorized
-- Submission report: updated to the required format with repository-hosted Boston and Miami screenshots
+- Dependency CHECK: SQLite is in Python's standard library; no dependency action was required
+- Backend: 6 tests passed, including CRUD, restart persistence, seed non-duplication, and unique IDs
+- Frontend: 4 tests passed; lint passed with no warnings; production build passed
+- Browser search, no-results, create/read, cancel/retain, delete, refresh, and both-server restart checks passed with test booking `B004`
+- `B004` was removed after verification; the ignored local database is back to the three starter bookings, and restart did not reseed the deleted record
+- Four Part 2 browser screenshots captured and linked in `report.md`; a silent 98-second assembled demo video now covers all frontend CRUD actions and has been frame-checked
+- Demo test bookings `B005` and `B007` were deleted after use. Browser refresh and a direct SQLite check show only the three starter bookings (`B001`–`B003`); the user reviewed and approved the completed video
+- User authorized commit and push on September 21, 2026; final Git checkpoint and Canvas submission status are to be recorded after those actions
 
-## Reference/data notes
+## Data note and next task
 
-- The requested Downloads ZIP was absent, so the attached same-named ZIP at `/Users/milestudor/Documents/test folder IST 402/expedia-lite-data.zip` was reviewed and used.
-- The earlier Hello Agent calculator at `/Users/milestudor/Documents/test folder IST 402` was reviewed as the structural reference. Expedia Lite preserves its separate Vue/FastAPI layout and local run/check documentation while independently adapting routes, data access, tests, and UI.
+Only the original hotel/trip CSVs were present for Part 2, so `users.csv` and `bookings.csv` contain a small documented starter set. Next: commit the reviewed feature branch, merge to `main`, recheck, push, and submit the report to Canvas without altering the Part 1 checkpoint.

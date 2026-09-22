@@ -1,0 +1,4 @@
+﻿booking_id,user_id,trip_id,status,created_at
+B001,U001,T001,confirmed,2026-09-01T14:00:00+00:00
+B002,U002,T005,cancelled,2026-09-02T15:30:00+00:00
+B003,U003,T008,confirmed,2026-09-03T17:15:00+00:00

@@ -1,34 +1,46 @@
-# Expedia Lite — Part 1
+# Expedia Lite — Part 2
 
 ## Repository and commit
 
 Private GitHub repository: [milestudor/expedia_project](https://github.com/milestudor/expedia_project)
 
-Exact Part 1 implementation commit: [`8d5a952b0dcc9e282bf1c8380aaaa48d60ee106e`](https://github.com/milestudor/expedia_project/commit/8d5a952b0dcc9e282bf1c8380aaaa48d60ee106e) (`Implement Expedia Lite Part 1`).
+Exact Part 1 implementation commit: [`8d5a952b0dcc9e282bf1c8380aaaa48d60ee106e`](https://github.com/milestudor/expedia_project/commit/8d5a952b0dcc9e282bf1c8380aaaa48d60ee106e). The exact Part 2 implementation commit is recorded below after the reviewed feature-branch commit.
 
 ## Implementation
 
-The Vue frontend provides a labeled city input, Search button, request states, a results table, empty-input guidance, and a clear no-results message. It sends `GET /api/stays?city=...` requests to FastAPI through the Vite development proxy.
+Part 2 replaces runtime CSV reads with durable SQLite access. On first startup, Python creates the schema and seeds hotels/trips plus starter users/bookings while preserving IDs. Later starts leave nonempty tables unchanged. A stored sequence assigns unique IDs to new bookings.
 
-FastAPI validates the request and delegates the search to the Python backend. The backend reads `hotels.csv` and `trips.csv` using UTF-8 BOM-aware decoding, joins their rows through `hotel_id`, and matches city names case-insensitively after trimming surrounding whitespace. Each response row combines the trip and hotel fields and derives the number of nights and total stay price.
+The Vue frontend searches hotel names or cities, selects a traveler, creates a simulated booking, reads booking history, cancels a booking by changing its status while retaining it, and permanently deletes a test booking. Every action uses FastAPI, which validates requests and performs all SQLite reads and writes.
 
 ## Verification
 
-Manual review was approved on September 10, 2026. The application was reviewed in a browser with the Vue frontend on port 5174 and FastAPI on port 8010 because ports 5173 and 8000 were already occupied by the Hello Agent reference project.
+Automated verification passed again on September 21, 2026: 6 backend tests, including full CRUD and database-restart persistence; 4 frontend tests; ESLint with no warnings; and the Vite production build.
 
-| Action | Expected result | Observed result |
+| Frontend action | Expected result | Observed result |
 | --- | --- | --- |
-| Enter `Boston` and select **Search** | Four stays with trip IDs T001, T002, T009, and T010 | Passed. The page displayed “Hotel stays in Boston,” a “4 stays” count, and four rows with the expected IDs, joined hotels, dates, nights, nightly rates, and stay prices. |
-| Enter `Miami` and select **Search** | No result rows and a clear no-results message | Passed. The results table was absent and the page displayed “No stays found” with guidance to check the spelling or try another city. |
+| Search for `Harbor Lantern` | Matching Harbor Lantern stays appear from SQLite | Passed: two Harbor Lantern stays appeared with dates and prices |
+| Search for `No Such Hotel` | A clear no-results message appears | Passed: “No stays found” appeared with corrective guidance |
+| Book an available stay | A new unique booking appears in history | Passed: `B004` appeared as confirmed for Alex Morgan |
+| Refresh the browser | The new booking remains and starter rows are not duplicated | Passed: four total bookings appeared, including `B004` once |
+| Cancel the new booking | Its status becomes cancelled and the record remains | Passed: `B004` remained in history with cancelled status |
+| Restart both servers and refresh | The cancelled status remains | Passed: four total bookings remained and `B004` was still cancelled |
+| Delete the test booking | The record disappears from history | Passed: `B004` disappeared and history returned to three records |
+| Restart both servers and refresh | The deleted record stays absent | Passed: `B004` remained absent and starter records were not reloaded |
 
-![Boston search showing four matching hotel stays](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/boston-search.png?raw=true)
+All required browser CRUD and persistence behaviors passed. The following screenshots were captured from the frontend on September 21, 2026. The new example booking in these captures is `B005`; the earlier completed restart/delete verification used `B004`.
 
-![Miami search showing the no-results message](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/miami-no-results.png?raw=true)
+![Hotel-name search returning two stays](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/part-2-search-results.png?raw=true)
 
-Automated verification also passed: 3 backend pytest checks, frontend ESLint with 0 errors and 54 formatting warnings, 3 frontend Vitest checks, a Vite production build, and an npm audit with 0 known vulnerabilities.
+![Clear no-results message](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/part-2-no-results.png?raw=true)
+
+![New confirmed booking B005 in history](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/part-2-created-booking.png?raw=true)
+
+![Cancelled booking B005 retained in history](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/part-2-cancelled-booking.png?raw=true)
+
+Demo video: the silent [98-second Part 2 demo](https://github.com/milestudor/expedia_project/blob/main/docs/expedia-lite-part-2-demo.mp4) shows search, no-results, create/read, refresh, cancellation, and deletion through the frontend. The final deletion segment creates and removes disposable booking `B007`; after refresh, history again shows only the three starter bookings. The recording is assembled from two browser captures, and the screenshot evidence above shows the earlier `B005` example. These repository links will become accessible after the reviewed changes are pushed.
 
 ## Project context and next steps
 
 Project documentation: [README](https://github.com/milestudor/expedia_project/blob/main/README.md), [AGENTS.md](https://github.com/milestudor/expedia_project/blob/main/AGENTS.md), [design note](https://github.com/milestudor/expedia_project/blob/main/docs/design.md), [selected prompts](https://github.com/milestudor/expedia_project/blob/main/prompts/selected.md), and [current handoff](https://github.com/milestudor/expedia_project/blob/main/handoffs/current.md).
 
-Part 1 intentionally remains read-only and CSV-backed. It does not include users, bookings, authentication, payments, live inventory, or persistence. The next task is Part 2: introduce SQLite-backed persistence and the required booking workflows without re-importing starter data destructively on every startup. Because the repository is private, the instructor must be granted repository access for these links and screenshots to open.
+Remaining limitations are intentionally classroom-scale: no authentication, real payment, live room inventory, or concurrent reservation control. The user reviewed the completed demo and authorized commit and push on September 21, 2026. After the repository is pushed, submit this `report.md` to the Part 2 Canvas assignment. Because the repository is private, the instructor must have repository access for links to work.
