@@ -4,7 +4,7 @@
 
 Private GitHub repository: [milestudor/expedia_project](https://github.com/milestudor/expedia_project)
 
-Exact Part 1 implementation commit: [`8d5a952b0dcc9e282bf1c8380aaaa48d60ee106e`](https://github.com/milestudor/expedia_project/commit/8d5a952b0dcc9e282bf1c8380aaaa48d60ee106e). The exact Part 2 implementation commit is recorded below after the reviewed feature-branch commit.
+Exact Part 1 implementation commit: [`8d5a952b0dcc9e282bf1c8380aaaa48d60ee106e`](https://github.com/milestudor/expedia_project/commit/8d5a952b0dcc9e282bf1c8380aaaa48d60ee106e). Exact Part 2 implementation commit: [`8cb4b3c3a6527798f59dd96690f2784da898c06f`](https://github.com/milestudor/expedia_project/commit/8cb4b3c3a6527798f59dd96690f2784da898c06f), developed on `codex/part-2-sqlite-crud` and merged into `main`.
 
 ## Implementation
 
@@ -37,10 +37,10 @@ All required browser CRUD and persistence behaviors passed. The following screen
 
 ![Cancelled booking B005 retained in history](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/part-2-cancelled-booking.png?raw=true)
 
-Demo video: the silent [98-second Part 2 demo](https://github.com/milestudor/expedia_project/blob/main/docs/expedia-lite-part-2-demo.mp4) shows search, no-results, create/read, refresh, cancellation, and deletion through the frontend. The final deletion segment creates and removes disposable booking `B007`; after refresh, history again shows only the three starter bookings. The recording is assembled from two browser captures, and the screenshot evidence above shows the earlier `B005` example. These repository links will become accessible after the reviewed changes are pushed.
+Demo video: the silent [98-second Part 2 demo](https://github.com/milestudor/expedia_project/blob/main/docs/expedia-lite-part-2-demo.mp4) shows search, no-results, create/read, refresh, cancellation, and deletion through the frontend. The final deletion segment creates and removes disposable booking `B007`; after refresh, history again shows only the three starter bookings. The recording is assembled from two browser captures, and the screenshot evidence above shows the earlier `B005` example.
 
 ## Project context and next steps
 
 Project documentation: [README](https://github.com/milestudor/expedia_project/blob/main/README.md), [AGENTS.md](https://github.com/milestudor/expedia_project/blob/main/AGENTS.md), [design note](https://github.com/milestudor/expedia_project/blob/main/docs/design.md), [selected prompts](https://github.com/milestudor/expedia_project/blob/main/prompts/selected.md), and [current handoff](https://github.com/milestudor/expedia_project/blob/main/handoffs/current.md).
 
-Remaining limitations are intentionally classroom-scale: no authentication, real payment, live room inventory, or concurrent reservation control. The user reviewed the completed demo and authorized commit and push on September 21, 2026. After the repository is pushed, submit this `report.md` to the Part 2 Canvas assignment. Because the repository is private, the instructor must have repository access for links to work.
+Remaining limitations are intentionally classroom-scale: no authentication, real payment, live room inventory, or concurrent reservation control. The user reviewed the completed demo and authorized commit and push on September 21, 2026. Submit this `report.md` to the Part 2 Canvas assignment. Because the repository is private, the instructor must have repository access for links to work.

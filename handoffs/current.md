@@ -14,11 +14,11 @@
 - Backend: 6 tests passed, including CRUD, restart persistence, seed non-duplication, and unique IDs
 - Frontend: 4 tests passed; lint passed with no warnings; production build passed
 - Browser search, no-results, create/read, cancel/retain, delete, refresh, and both-server restart checks passed with test booking `B004`
-- `B004` was removed after verification; the ignored local database is back to the three starter bookings, and restart did not reseed the deleted record
+- `B004` was removed after verification; restart did not reseed the deleted record
 - Four Part 2 browser screenshots captured and linked in `report.md`; a silent 98-second assembled demo video now covers all frontend CRUD actions and has been frame-checked
 - Demo test bookings `B005` and `B007` were deleted after use. Browser refresh and a direct SQLite check show only the three starter bookings (`B001`–`B003`); the user reviewed and approved the completed video
-- User authorized commit and push on September 21, 2026; final Git checkpoint and Canvas submission status are to be recorded after those actions
+- User authorized commit and push on September 21, 2026; feature implementation commit `8cb4b3c3a6527798f59dd96690f2784da898c06f` was fast-forwarded into `main`
 
 ## Data note and next task
 
-Only the original hotel/trip CSVs were present for Part 2, so `users.csv` and `bookings.csv` contain a small documented starter set. Next: commit the reviewed feature branch, merge to `main`, recheck, push, and submit the report to Canvas without altering the Part 1 checkpoint.
+The repository had no user/booking starter files, so `users.csv` and `bookings.csv` contain a small documented starter set; the original hotel/trip CSVs remain intact. Next: finish combined checks on `main`, push, and submit the report to Canvas without altering the Part 1 checkpoint.
