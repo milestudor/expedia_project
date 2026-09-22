@@ -17,8 +17,8 @@
 - `B004` was removed after verification; restart did not reseed the deleted record
 - Four Part 2 browser screenshots captured and linked in `report.md`; a silent 98-second assembled demo video now covers all frontend CRUD actions and has been frame-checked
 - Demo test bookings `B005` and `B007` were deleted after use. Browser refresh and a direct SQLite check show only the three starter bookings (`B001`–`B003`); the user reviewed and approved the completed video
-- User authorized commit and push on September 21, 2026; feature implementation commit `8cb4b3c3a6527798f59dd96690f2784da898c06f` was fast-forwarded into `main`
+- User authorized commit and push on September 21, 2026; feature implementation commit `8cb4b3c3a6527798f59dd96690f2784da898c06f` was fast-forwarded into `main`, checked, and pushed with the final report
 
 ## Data note and next task
 
-The repository had no user/booking starter files, so `users.csv` and `bookings.csv` contain a small documented starter set; the original hotel/trip CSVs remain intact. Next: finish combined checks on `main`, push, and submit the report to Canvas without altering the Part 1 checkpoint.
+The repository had no user/booking starter files, so `users.csv` and `bookings.csv` contain a small documented starter set; the original hotel/trip CSVs remain intact. The repository is private. Next: enable Chrome extension file-URL access, upload `report.md` to the Part 2 Canvas assignment, verify a submission receipt, and ensure the instructor can access the repository links. The Part 1 checkpoint remains in history.
