@@ -1,0 +1,69 @@
+{
+  "date": "2026-09-29T13:44:18.615Z",
+  "checks": [
+    {
+      "check": "invalid ZIP",
+      "observed": "Check your ZIP code\n\nEnter a five-digit U.S. ZIP code, such as 02108."
+    },
+    {
+      "check": "live 02108 HTTP status",
+      "observed": 200
+    },
+    {
+      "check": "live 02108 results",
+      "observed": {
+        "center": {
+          "postcode": "02108",
+          "country_code": "us",
+          "latitude": 42.357581412,
+          "longitude": -71.065946589,
+          "locality": "Boston"
+        },
+        "count": 50,
+        "first": {
+          "place_id": "513535bf5076c451c059c59e8724c42d4540f00103f901e9a7ba0701000000",
+          "name": null,
+          "address": "16 Cedar Lane Way, Boston, MA 02108, United States of America",
+          "latitude": 42.3575483,
+          "longitude": -71.0697214
+        }
+      }
+    },
+    {
+      "check": "marker count matches list",
+      "observed": 50
+    },
+    {
+      "check": "list selects map",
+      "observed": "1. Hotel name unavailable"
+    },
+    {
+      "check": "keyboard marker selects list",
+      "observed": "2\nBeacon Hill Hotel and Bistro\nBeacon Hill Hotel and Bistro, 25-29 Charles Street, Boston, MA 02114, United States of America\n42.35691, -71.06965\nSelected on map\n↗"
+    },
+    {
+      "check": "simulated empty",
+      "observed": "No nearby hotels returned, center map retained"
+    },
+    {
+      "check": "simulated unresolved",
+      "observed": "ZIP code not found"
+    },
+    {
+      "check": "simulated service failure",
+      "observed": "Search unavailable, no empty-success claim"
+    },
+    {
+      "check": "390px mobile layout",
+      "observed": "No horizontal overflow; list and map stacked (replayed live response)"
+    },
+    {
+      "check": "legacy sample regression",
+      "observed": true
+    },
+    {
+      "check": "browser errors",
+      "observed": []
+    }
+  ]
+}

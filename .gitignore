@@ -7,3 +7,6 @@ frontend/dist/
 .DS_Store
 backend/data/expedia-lite-data/
 backend/data/expedia_lite.db
+.env
+.env.*
+!.env.example

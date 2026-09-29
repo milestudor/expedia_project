@@ -1,46 +1,107 @@
-# Expedia Lite — Part 2
+# Assignment 2 — Part 1: Live Hotel Search and Map
 
-## Repository and commit
+**Observation date:** September 29, 2026. **Scope:** Part 1 only. No persistent shortlist was implemented.
 
-Private GitHub repository: [milestudor/expedia_project](https://github.com/milestudor/expedia_project)
+## Project access and configuration
 
-Exact Part 1 implementation commit: [`8d5a952b0dcc9e282bf1c8380aaaa48d60ee106e`](https://github.com/milestudor/expedia_project/commit/8d5a952b0dcc9e282bf1c8380aaaa48d60ee106e). Exact Part 2 implementation commit: [`8cb4b3c3a6527798f59dd96690f2784da898c06f`](https://github.com/milestudor/expedia_project/commit/8cb4b3c3a6527798f59dd96690f2784da898c06f), developed on `codex/part-2-sqlite-crud` and merged into `main`.
+Repository: [milestudor/expedia_project](https://github.com/milestudor/expedia_project).
 
-## Implementation
+**Assessed commit: pending student review.** The implementation is in the local working tree; existing base commit is `50c55cc5e7f7906208748aca750815c8c4193643` and does **not** contain this new work. AGENTS.md prohibits committing or pushing before manual review. Replace this field with the reviewed implementation commit before submission.
 
-Part 2 replaces runtime CSV reads with durable SQLite access. On first startup, Python creates the schema and seeds hotels/trips plus starter users/bookings while preserving IDs. Later starts leave nonempty tables unchanged. A stored sequence assigns unique IDs to new bookings.
+**Access status:** new artifacts are local and are not published yet. The prior report described the repository as private; instructor access has not been verified. Before submitting this report, publish/link the reviewed artifacts in an instructor-accessible location without an additional access request. Do not submit this draft with pending access/commit fields.
 
-The Vue frontend searches hotel names or cities, selects a traveler, creates a simulated booking, reads booking history, cancels a booking by changing its status while retaining it, and permanently deletes a test booking. Every action uses FastAPI, which validates requests and performs all SQLite reads and writes.
+Requirements: Python 3.11+, Node 20.19+ or 22.12+, and a Geoapify API key. From the repository root:
 
-## Verification
+```sh
+python3 -m venv backend/.venv
+backend/.venv/bin/python -m pip install -r backend/requirements.txt
+cd frontend
+npm ci
+cd ..
+```
 
-Automated verification passed again on September 21, 2026: 6 backend tests, including full CRUD and database-restart persistence; 4 frontend tests; ESLint with no warnings; and the Vite production build.
+Create the root `.env` from `.env.example` only if it does not already exist. Set `GEOAPIFY_API_KEY` to your own key; never commit it. Start the backend and frontend in separate terminals:
 
-| Frontend action | Expected result | Observed result |
+```sh
+backend/.venv/bin/python -m uvicorn backend.app.main:app --reload --port 8000
+```
+
+```sh
+cd frontend
+npm run dev
+```
+
+Open `http://127.0.0.1:5173`. Restart the backend after changing `.env`. Backend environment variables take precedence over the file. The browser receives no Geoapify credential; public OpenStreetMap tiles require no key. [README](README.md) contains full startup and verification instructions.
+
+## Research notes and design
+
+Research was performed before the discovery interface was implemented. [Detailed research notes](docs/assignment-2-part-1/research.md).
+
+| Sources | Observation and resulting decision |
+| --- | --- |
+| [Expedia Hotels](https://www.expedia.com/Hotels) | Destination-first discovery is useful. Booking offers/dates imply inventory that this provider does not supply; omit those from the live interface. |
+| [Google Travel](https://www.google.com/travel/hotels) | Research reader redirected to an unsupported-browser page. Interactive behavior could not be evaluated; no synchronization claim is attributed to it. |
+| [Geoapify geocoding](https://apidocs.geoapify.com/docs/geocoding/) | Use postcode lookup and U.S. country filter, then verify exact requested postcode/country and valid coordinates before querying hotels. |
+| [Geoapify Places](https://apidocs.geoapify.com/docs/places/) | Use `accommodation.hotel`, `circle:longitude,latitude,5000`, proximity bias and limit 50. Coverage is variable, so explicitly avoid exhaustive-inventory claims. |
+| [Leaflet documentation](https://leafletjs.com/reference) | Use numbered keyboard-focusable markers, safe text popups and a shared selected provider ID. Explicit Enter/Space handling was necessary for list synchronization. |
+| [OSM tile policy](https://operations.osmfoundation.org/policies/tiles/), [Geoapify pricing](https://www.geoapify.com/pricing/), [terms](https://www.geoapify.com/terms-and-conditions/) | Visible attribution, ordinary browser tile caching, modest explicit-submit request volume, no automatic retries or bulk tile download. No paid plan is required for this classroom demonstration. |
+
+The research-access limitations and follow-up Booking.com access attempt are documented in the detailed notes rather than presented as observed interactions.
+
+## Early mockup and implementation
+
+![Early Part 1 mockup](docs/assignment-2-part-1/mockup.svg)
+
+The mockup was created before the new discovery view. It proposes a ZIP search, numbered list and map, returned-center circle, missing-field labels and distinct request states. The final design retains that behavior with a larger introductory area and separate navigation to the previous sample application. On narrow screens, list and map stack vertically.
+
+FastAPI controls ZIP validation and HTTP error mapping. `zip_lookup.py` verifies the requested location, and `hotel_search.py` requests/normalizes hotels. Vue controls loading, result/error state and one selected provider ID. Leaflet renders those hotel coordinates and emits selection. [MVC responsibilities](AGENTS.md), [design and data contract](docs/design.md).
+
+The original sample application is retained at `/sample-stays`; it is separate from the live search. No live prices, ratings, rooms, booking confirmations or shortlist controls are fabricated. Missing names and addresses have honest labels. Malformed provider identifiers/coordinates fail visibly rather than silently producing an empty success.
+
+## Screen-recorded demonstration
+
+[Part 1 demo video — 21.92 seconds, WebM](docs/assignment-2-part-1/part-1-demo.webm).
+
+This silent browser capture shows invalid ZIP feedback, a **live** `02108` search, list-to-map selection and keyboard marker-to-list selection. Subsequent empty/unresolved/failure demonstrations are explicitly labeled simulations. A labeled replay of the captured live response checks narrow-screen layout; a brief original-sample regression check concludes the video. [Demo script](docs/assignment-2-part-1/demo-script.md).
+
+The local link must be replaced or published with instructor access after student review.
+
+## Verification record
+
+Live ZIP tested: **02108**, September 29, 2026, approximately **09:44 ET**. Returned Boston postcode point: **42.357581412, -71.065946589**. Observed 50 hotels, reaching the configured cap; this count is not a future expectation or exhaustive inventory.
+
+| Input/action | Expected | Observed |
 | --- | --- | --- |
-| Search for `Harbor Lantern` | Matching Harbor Lantern stays appear from SQLite | Passed: two Harbor Lantern stays appeared with dates and prices |
-| Search for `No Such Hotel` | A clear no-results message appears | Passed: “No stays found” appeared with corrective guidance |
-| Book an available stay | A new unique booking appears in history | Passed: `B004` appeared as confirmed for Alex Morgan |
-| Refresh the browser | The new booking remains and starter rows are not duplicated | Passed: four total bookings appeared, including `B004` once |
-| Cancel the new booking | Its status becomes cancelled and the record remains | Passed: `B004` remained in history with cancelled status |
-| Restart both servers and refresh | The cancelled status remains | Passed: four total bookings remained and `B004` was still cancelled |
-| Delete the test booking | The record disappears from history | Passed: `B004` disappeared and history returned to three records |
-| Restart both servers and refresh | The deleted record stays absent | Passed: `B004` remained absent and starter records were not reloaded |
+| Submit `1234` | Local invalid-input feedback | Passed |
+| Submit `02108` | Loading, intended U.S. ZIP, 5 km provider query | HTTP 200, Boston center and 50 records |
+| Missing provider name | Honest fallback | “Hotel name unavailable” |
+| Select first card | Matching map marker | Highlight and matching popup |
+| Enter on marker 2 | Matching list selection | Beacon Hill Hotel and Bistro selected |
+| Simulated empty / unresolved / failed response | Distinct messages; failures never called empty success | All passed |
+| 390px viewport | List/map stack, no horizontal overflow | Passed using labeled replay |
+| Existing sample hotel search | Preserved earlier behavior | Harbor Lantern results passed |
+| Backend automated checks | Original behavior, exact ZIP gating, provider normalization and errors | 60 passed |
+| Frontend automated checks | Existing views, validation, state transitions, shared selection | 24 passed |
+| Lint / production build | Successful | Passed |
 
-All required browser CRUD and persistence behaviors passed. The following screenshots were captured from the frontend on September 21, 2026. The new example booking in these captures is `B005`; the earlier completed restart/delete verification used `B004`.
+[Full expected-versus-observed record and corrections](docs/assignment-2-part-1/verification.md), [browser observations](docs/assignment-2-part-1/browser-verification.json), [live screenshot](docs/assignment-2-part-1/live-results.png), [map selection](docs/assignment-2-part-1/map-selection.png).
 
-![Hotel-name search returning two stays](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/part-2-search-results.png?raw=true)
+Repeat checks:
 
-![Clear no-results message](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/part-2-no-results.png?raw=true)
+```sh
+backend/.venv/bin/python -m pytest backend/tests -q
+cd frontend
+npm test
+npm run lint
+npm run build
+```
 
-![New confirmed booking B005 in history](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/part-2-created-booking.png?raw=true)
+Remaining limits: one live ZIP verified; other edge states simulated; no pagination beyond 50; provider coverage and tile/network availability vary. A tile-failure message is implemented but not deliberately exercised in the recorded run. Tests simulate provider 429 rather than exhausting quota. One existing anyio deprecation warning remains.
 
-![Cancelled booking B005 retained in history](https://github.com/milestudor/expedia_project/blob/main/docs/screenshots/part-2-cancelled-booking.png?raw=true)
+## AI disclosure and evidence log
 
-Demo video: the silent [98-second Part 2 demo](https://github.com/milestudor/expedia_project/blob/main/docs/expedia-lite-part-2-demo.mp4) shows search, no-results, create/read, refresh, cancellation, and deletion through the frontend. The final deletion segment creates and removes disposable booking `B007`; after refresh, history again shows only the three starter bookings. The recording is assembled from two browser captures, and the screenshot evidence above shows the earlier `B005` example.
+OpenAI Codex desktop, GPT-6 agent session, was used for interpreting the assignment, primary-source research, mockup creation, implementation, tests, browser automation and documentation. The exact model deployment build identifier is not exposed in the session. Web tools retrieved sources; Playwright with installed Chrome verified the UI; the separately approved FFmpeg v1011 helper recorded it. No subagents were used.
 
-## Project context and next steps
+Selected user prompt: “please view the following instructions and only complete what is asked for part 1 please.” The student separately approved Leaflet 1.9.4 and the video helper. [Selected prompts and linked changes](prompts/selected.md) records those decisions.
 
-Project documentation: [README](https://github.com/milestudor/expedia_project/blob/main/README.md), [AGENTS.md](https://github.com/milestudor/expedia_project/blob/main/AGENTS.md), [design note](https://github.com/milestudor/expedia_project/blob/main/docs/design.md), [selected prompts](https://github.com/milestudor/expedia_project/blob/main/prompts/selected.md), and [current handoff](https://github.com/milestudor/expedia_project/blob/main/handoffs/current.md).
-
-Remaining limitations are intentionally classroom-scale: no authentication, real payment, live room inventory, or concurrent reservation control. The user reviewed the completed demo and authorized commit and push on September 21, 2026. Submit this `report.md` to the Part 2 Canvas assignment. Because the repository is private, the instructor must have repository access for links to work.
+A failed implementation approach was corrected: listening only for marker clicks left keyboard Enter opening a popup without selecting the list entry. Explicit Enter/Space handling fixed it, and the browser rerun passed. Environment revisions (wrong virtual environment, network-restricted install, unavailable bundled browser) are also recorded. The student must manually review the work and browser results before the assessed commit and publication.

@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import App from './App.vue'
+import App from './LegacyApp.vue'
 
 const stay = {
   trip_id: 'T001', trip_name: 'Boston Harbor Weekend', hotel_name: 'Harbor Lantern Hotel',

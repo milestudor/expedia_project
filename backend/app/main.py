@@ -12,6 +12,10 @@ from fastapi import FastAPI, HTTPException, Query, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from .hotel_search import find_hotels
+from .config import geoapify_key_status
+from .zip_lookup import ZipConfigurationError, ZipLookupError, lookup_zip
+
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 DEFAULT_DATABASE = DATA_DIR / "expedia_lite.db"
 
@@ -151,7 +155,30 @@ def create_app(database: Path = DEFAULT_DATABASE) -> FastAPI:
 
     @application.get("/api/health")
     def health() -> dict[str, str]:
-        return {"status": "ok"}
+        return {"status": "ok", "geoapify": geoapify_key_status()}
+
+    @application.get("/api/demo/zip-location")
+    def demo_zip_location(postcode: str = Query(default="")) -> dict[str, str | float]:
+        postcode = postcode.strip()
+        if len(postcode) != 5 or not postcode.isascii() or not postcode.isdigit():
+            raise HTTPException(status_code=422, detail="Enter a five-digit U.S. ZIP code.")
+        try:
+            location = lookup_zip(postcode)
+        except ZipConfigurationError:
+            raise HTTPException(status_code=503, detail="Geoapify key is not configured.") from None
+        except ZipLookupError:
+            raise HTTPException(status_code=502, detail="Location provider request failed.") from None
+        if location is None:
+            raise HTTPException(status_code=404, detail=f"ZIP {postcode} could not be resolved.")
+        return location
+
+    @application.get("/api/hotels")
+    def discover_hotels(postcode: str = Query(default="")) -> dict:
+        location = demo_zip_location(postcode)
+        try:
+            return find_hotels(location)
+        except ZipLookupError as error:
+            raise HTTPException(status_code=502, detail=str(error)) from None
 
     @application.get("/api/stays", response_model=list[Stay])
     def get_stays(q: str = Query(min_length=1)) -> list[Stay]:

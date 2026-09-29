@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="730" viewBox="0 0 1100 730">
+<rect width="1100" height="730" fill="#f5f7fb"/><g font-family="Arial" fill="#18202b">
+<text x="40" y="42" font-size="18">EARLY MOCKUP · Assignment 2 / Part 1 · September 29, 2026</text>
+<rect x="30" y="65" width="1040" height="190" rx="16" fill="#102c51"/>
+<text x="60" y="110" font-size="30" fill="white">Find hotels around a ZIP code</text>
+<text x="60" y="145" font-size="16" fill="white">Within 5 km of the returned postcode point · not your current location</text>
+<rect x="60" y="171" width="290" height="50" rx="8" fill="white"/><text x="80" y="204" font-size="20">U.S. ZIP: 02108</text>
+<rect x="365" y="171" width="180" height="50" rx="8" fill="#f7cc66"/><text x="387" y="203" font-size="18">Find hotels</text>
+<text x="40" y="293" font-size="18">Results around ZIP 02108 · Up to 50 provider records, coverage varies</text>
+<rect x="30" y="320" width="400" height="270" rx="12" fill="white" stroke="#bac6d8"/>
+<rect x="45" y="337" width="370" height="90" rx="9" fill="#e1eef1" stroke="#247477"/>
+<text x="65" y="370" font-size="20">1. Provider hotel name</text><text x="65" y="400" font-size="16">Provider address or “Address unavailable”</text>
+<text x="65" y="473" font-size="20">2. Hotel name unavailable</text><text x="65" y="505" font-size="16">Coordinates from response</text>
+<rect x="450" y="320" width="620" height="270" rx="12" fill="#e6ece5" stroke="#bac6d8"/>
+<circle cx="760" cy="451" r="112" fill="none" stroke="#247477" stroke-dasharray="7 5"/><circle cx="760" cy="451" r="5" fill="#102c51"/>
+<circle cx="712" cy="414" r="20" fill="#247477"/><text x="706" y="420" fill="white" font-size="18">1</text>
+<circle cx="820" cy="484" r="20" fill="#102c51"/><text x="814" y="490" fill="white" font-size="18">2</text>
+<text x="471" y="566" font-size="14">Leaflet + visible OpenStreetMap attribution</text>
+<text x="40" y="631" font-size="16">Interaction: selecting a list card or keyboard-accessible marker selects the same hotel.</text>
+<text x="40" y="659" font-size="16">States: idle → loading → results / no nearby results / unresolved ZIP / request failed.</text>
+<text x="40" y="687" font-size="16">Invalid input stays local. On narrow screens the map follows the list. No booking or shortlist.</text>
+</g></svg>

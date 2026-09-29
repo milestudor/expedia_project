@@ -1,10 +1,35 @@
 import sqlite3
+from unittest.mock import Mock
 from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 
 from backend.app.main import create_app
+from backend.app import main
+from backend.app.zip_lookup import ZipConfigurationError, ZipLookupError
+
+
+@pytest.mark.parametrize("outcome,code,body", [
+    ({"postcode": "16802", "country_code": "us", "latitude": 40.8, "longitude": -77.86},
+     200, {"postcode": "16802", "country_code": "us", "latitude": 40.8, "longitude": -77.86}),
+    (None, 404, {"detail": "ZIP 16802 could not be resolved."}),
+    (ZipConfigurationError("private configuration detail"), 503,
+     {"detail": "Geoapify key is not configured."}),
+    (ZipLookupError("private provider detail"), 502,
+     {"detail": "Location provider request failed."}),
+])
+def test_demo_zip_route(client, monkeypatch, outcome, code, body):
+    controller = Mock()
+    if isinstance(outcome, Exception):
+        controller.side_effect = outcome
+    else:
+        controller.return_value = outcome
+    monkeypatch.setattr(main, "lookup_zip", controller)
+    response = client.get("/api/demo/zip-location", params={"postcode": "16802"})
+    assert response.status_code == code
+    assert response.json() == body
+    controller.assert_called_once_with("16802")
 
 
 @pytest.fixture
@@ -15,6 +40,19 @@ def database(tmp_path: Path) -> Path:
 @pytest.fixture
 def client(database: Path) -> TestClient:
     return TestClient(create_app(database))
+
+
+@pytest.mark.parametrize("value", [None, "", " \t\n", "test-placeholder"])
+def test_health_reports_only_key_status(client: TestClient, monkeypatch, value) -> None:
+    monkeypatch.delenv("GEOAPIFY_API_KEY", raising=False)
+    if value is not None:
+        monkeypatch.setenv("GEOAPIFY_API_KEY", value)
+    response = client.get("/api/health")
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "ok",
+        "geoapify": "key is configured" if value and value.strip() else "key is not configured",
+    }
 
 
 def test_hotel_name_search_joins_sqlite_records(client: TestClient) -> None:
@@ -70,3 +108,22 @@ def test_seeded_ids_are_preserved(client: TestClient, database: Path) -> None:
         assert connection.execute("SELECT hotel_id FROM hotels ORDER BY hotel_id LIMIT 1").fetchone()[0] == "H001"
         assert connection.execute("SELECT trip_id FROM trips ORDER BY trip_id LIMIT 1").fetchone()[0] == "T001"
         assert connection.execute("SELECT booking_id FROM bookings ORDER BY booking_id LIMIT 1").fetchone()[0] == "B001"
+
+
+@pytest.mark.parametrize("postcode", [None, "", "1234", "123456", "abcde", "１２３４５", "16802-1234"])
+def test_invalid_zip_never_calls_provider(client, monkeypatch, postcode):
+    controller = Mock()
+    monkeypatch.setattr(main, "lookup_zip", controller)
+    response = client.get("/api/demo/zip-location", params={} if postcode is None else {"postcode": postcode})
+    assert response.status_code == 422
+    assert response.json() == {"detail": "Enter a five-digit U.S. ZIP code."}
+    controller.assert_not_called()
+
+
+def test_zip_preserves_leading_zero_and_trims(client, monkeypatch):
+    controller = Mock(return_value=None)
+    monkeypatch.setattr(main, "lookup_zip", controller)
+    response = client.get("/api/demo/zip-location", params={"postcode": " 02108 "})
+    controller.assert_called_once_with("02108")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "ZIP 02108 could not be resolved."}
