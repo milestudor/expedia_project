@@ -50,3 +50,7 @@ All generated work remains subject to student review. No commit, push, repositor
 - User approved: “Approve video helper download.” Downloaded Playwright FFmpeg v1011 solely for verification, leaving app manifests unchanged; existing Chrome used for browser capture.
 
 - Student review: “once i click sample stays, should i be able to go back to the new search” → added a visible return link in [LegacyApp.vue](../frontend/src/LegacyApp.vue), with keyboard focus styling and wrapping navigation. No dependencies changed.
+
+## Publication approval
+
+User: “okay it looks really good. Unless there's anything extra you want to add to make this look more fancy, please commit and push”. No extra visual features added. Manual review and return-navigation correction accepted; approved implementation committed, repository verified public, and report finalized with public links. Prior “no commit” statements describe earlier checkpoints.

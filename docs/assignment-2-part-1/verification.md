@@ -48,7 +48,7 @@ The live result count is an observation, not a test expectation. Assertions comp
 - Real browser testing found Enter opened a Leaflet popup without selecting the list item. Added explicit Enter/Space selection and in-place marker highlighting; rerun passed. Frontend tests/lint/build passed after this fix.
 - Live search verified one ZIP, `02108`. Invalid/unresolved/empty/failure edge cases use simulations; they are not claims about those real locations or current service availability. The upstream 429 case is mocked at the provider boundary, not induced live.
 - Fifty-result cap, no pagination, variable provider coverage, and normal network/tile-service dependency remain. Tile-failure UI is implemented but not explicitly forced in this recorded run. No user-position lookup is used.
-- Manual student review, assessed commit, and instructor-accessible publication of code/artifacts remain. No commit or push has been made, in accordance with AGENTS.md.
+- Student manual review is complete and commit/push explicitly authorized. Assessed implementation commit: `92b910b`. GitHub repository visibility verified public; report links finalized in a subsequent documentation-only commit.
 
 ## Student review follow-up — return navigation
 

@@ -66,4 +66,4 @@ See [report.md](report.md) for the Part 1 report, [research](docs/assignment-2-p
 
 Architecture and verification rules are in [AGENTS.md](AGENTS.md) and [docs/design.md](docs/design.md). Original sample hotels/trips remain joined by `hotel_id` with case-insensitive trimmed city matching. The existing database is ignored and retained; live discovery does not write hotel records into it.
 
-Do not commit or push until manual review of changes and browser results. The report's assessed commit and instructor-accessible artifact URLs must be finalized after that review.
+The student completed manual review and authorized commit and push. The assessed implementation commit is `92b910b`; [report.md](report.md) includes public submission links. Future changes still require the review workflow in AGENTS.md.

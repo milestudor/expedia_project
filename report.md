@@ -6,9 +6,9 @@
 
 Repository: [milestudor/expedia_project](https://github.com/milestudor/expedia_project).
 
-**Assessed commit: pending student review.** The implementation is in the local working tree; existing base commit is `50c55cc5e7f7906208748aca750815c8c4193643` and does **not** contain this new work. AGENTS.md prohibits committing or pushing before manual review. Replace this field with the reviewed implementation commit before submission.
+**Assessed implementation commit:** [`92b910b`](https://github.com/milestudor/expedia_project/commit/92b910b1a6eb1307349e15e0c07dfdd49aea3137). This contains the reviewed Part 1 implementation, including the return navigation from Sample stays. A subsequent documentation-only commit finalizes this report and public links.
 
-**Access status:** new artifacts are local and are not published yet. The prior report described the repository as private; instructor access has not been verified. Before submitting this report, publish/link the reviewed artifacts in an instructor-accessible location without an additional access request. Do not submit this draft with pending access/commit fields.
+**Access status:** the repository is public (verified through GitHub). The student completed manual browser review and explicitly authorized commit and push. Artifact links below target the public repository; no API credentials are included.
 
 Requirements: Python 3.11+, Node 20.19+ or 22.12+, and a Geoapify API key. From the repository root:
 
@@ -31,11 +31,11 @@ cd frontend
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. Restart the backend after changing `.env`. Backend environment variables take precedence over the file. The browser receives no Geoapify credential; public OpenStreetMap tiles require no key. [README](README.md) contains full startup and verification instructions.
+Open `http://127.0.0.1:5173`. Restart the backend after changing `.env`. Backend environment variables take precedence over the file. The browser receives no Geoapify credential; public OpenStreetMap tiles require no key. [README](https://github.com/milestudor/expedia_project/blob/main/README.md) contains full startup and verification instructions.
 
 ## Research notes and design
 
-Research was performed before the discovery interface was implemented. [Detailed research notes](docs/assignment-2-part-1/research.md).
+Research was performed before the discovery interface was implemented. [Detailed research notes](https://github.com/milestudor/expedia_project/blob/main/docs/assignment-2-part-1/research.md).
 
 | Sources | Observation and resulting decision |
 | --- | --- |
@@ -50,21 +50,21 @@ The research-access limitations and follow-up Booking.com access attempt are doc
 
 ## Early mockup and implementation
 
-![Early Part 1 mockup](docs/assignment-2-part-1/mockup.svg)
+![Early Part 1 mockup](https://raw.githubusercontent.com/milestudor/expedia_project/main/docs/assignment-2-part-1/mockup.svg)
 
 The mockup was created before the new discovery view. It proposes a ZIP search, numbered list and map, returned-center circle, missing-field labels and distinct request states. The final design retains that behavior with a larger introductory area and separate navigation to the previous sample application. On narrow screens, list and map stack vertically.
 
-FastAPI controls ZIP validation and HTTP error mapping. `zip_lookup.py` verifies the requested location, and `hotel_search.py` requests/normalizes hotels. Vue controls loading, result/error state and one selected provider ID. Leaflet renders those hotel coordinates and emits selection. [MVC responsibilities](AGENTS.md), [design and data contract](docs/design.md).
+FastAPI controls ZIP validation and HTTP error mapping. `zip_lookup.py` verifies the requested location, and `hotel_search.py` requests/normalizes hotels. Vue controls loading, result/error state and one selected provider ID. Leaflet renders those hotel coordinates and emits selection. [MVC responsibilities](https://github.com/milestudor/expedia_project/blob/main/AGENTS.md), [design and data contract](https://github.com/milestudor/expedia_project/blob/main/docs/design.md).
 
 The original sample application is retained at `/sample-stays`; it is separate from the live search. No live prices, ratings, rooms, booking confirmations or shortlist controls are fabricated. Missing names and addresses have honest labels. Malformed provider identifiers/coordinates fail visibly rather than silently producing an empty success.
 
 ## Screen-recorded demonstration
 
-[Part 1 demo video — 21.92 seconds, WebM](docs/assignment-2-part-1/part-1-demo.webm).
+[Part 1 demo video — 21.92 seconds, WebM](https://github.com/milestudor/expedia_project/blob/main/docs/assignment-2-part-1/part-1-demo.webm).
 
-This silent browser capture shows invalid ZIP feedback, a **live** `02108` search, list-to-map selection and keyboard marker-to-list selection. Subsequent empty/unresolved/failure demonstrations are explicitly labeled simulations. A labeled replay of the captured live response checks narrow-screen layout; a brief original-sample regression check concludes the video. [Demo script](docs/assignment-2-part-1/demo-script.md).
+This silent browser capture shows invalid ZIP feedback, a **live** `02108` search, list-to-map selection and keyboard marker-to-list selection. Subsequent empty/unresolved/failure demonstrations are explicitly labeled simulations. A labeled replay of the captured live response checks narrow-screen layout; a brief original-sample regression check concludes the video. [Demo script](https://github.com/milestudor/expedia_project/blob/main/docs/assignment-2-part-1/demo-script.md).
 
-The local link must be replaced or published with instructor access after student review.
+The recording predates the small return-navigation addition; that link was subsequently browser-verified with keyboard navigation and a narrow viewport.
 
 ## Verification record
 
@@ -84,7 +84,7 @@ Live ZIP tested: **02108**, September 29, 2026, approximately **09:44 ET**. Retu
 | Frontend automated checks | Existing views, validation, state transitions, shared selection | 24 passed |
 | Lint / production build | Successful | Passed |
 
-[Full expected-versus-observed record and corrections](docs/assignment-2-part-1/verification.md), [browser observations](docs/assignment-2-part-1/browser-verification.json), [live screenshot](docs/assignment-2-part-1/live-results.png), [map selection](docs/assignment-2-part-1/map-selection.png).
+[Full expected-versus-observed record and corrections](https://github.com/milestudor/expedia_project/blob/main/docs/assignment-2-part-1/verification.md), [browser observations](https://github.com/milestudor/expedia_project/blob/main/docs/assignment-2-part-1/browser-verification.json), [live screenshot](https://github.com/milestudor/expedia_project/blob/main/docs/assignment-2-part-1/live-results.png), [map selection](https://github.com/milestudor/expedia_project/blob/main/docs/assignment-2-part-1/map-selection.png).
 
 Repeat checks:
 
@@ -102,6 +102,6 @@ Remaining limits: one live ZIP verified; other edge states simulated; no paginat
 
 OpenAI Codex desktop, GPT-6 agent session, was used for interpreting the assignment, primary-source research, mockup creation, implementation, tests, browser automation and documentation. The exact model deployment build identifier is not exposed in the session. Web tools retrieved sources; Playwright with installed Chrome verified the UI; the separately approved FFmpeg v1011 helper recorded it. No subagents were used.
 
-Selected user prompt: “please view the following instructions and only complete what is asked for part 1 please.” The student separately approved Leaflet 1.9.4 and the video helper. [Selected prompts and linked changes](prompts/selected.md) records those decisions.
+Selected user prompt: “please view the following instructions and only complete what is asked for part 1 please.” The student separately approved Leaflet 1.9.4 and the video helper. [Selected prompts and linked changes](https://github.com/milestudor/expedia_project/blob/main/prompts/selected.md) records those decisions.
 
-A failed implementation approach was corrected: listening only for marker clicks left keyboard Enter opening a popup without selecting the list entry. Explicit Enter/Space handling fixed it, and the browser rerun passed. Environment revisions (wrong virtual environment, network-restricted install, unavailable bundled browser) are also recorded. The student must manually review the work and browser results before the assessed commit and publication.
+A failed implementation approach was corrected: listening only for marker clicks left keyboard Enter opening a popup without selecting the list entry. Explicit Enter/Space handling fixed it, and the browser rerun passed. Environment revisions (wrong virtual environment, network-restricted install, unavailable bundled browser) are also recorded. The student completed manual review of the application and browser results, confirmed the return-navigation correction, and authorized commit and push.

@@ -1,5 +1,9 @@
 # Current handoff
 
+## Latest — reviewed Part 1 publication
+
+Student completed manual browser review, accepted the return-navigation correction, and explicitly authorized commit/push. Implementation commit: `92b910b1a6eb1307349e15e0c07dfdd49aea3137`. Repository verified PUBLIC. Report now identifies the assessed implementation and uses absolute public artifact links suitable for uploading report.md alone. Documentation finalization is a separate commit; push both to origin/main. No extra features added. Earlier pending-review notes below are historical.
+
 ## Implemented
 
 - Latest: ZIP lookup now accepts a five-digit U.S. ZIP text field and sends it as the
