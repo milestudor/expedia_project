@@ -1,0 +1,66 @@
+# Assignment 2 — Part 2: Business Intelligence with SQL RAG
+
+**Review draft, October 8, 2026.** Revised due date: October 8, 2026, 11:59 PM Eastern. The attached RAG-context activity is implemented and verified with mocks/real isolated SQLite. Live OpenAI generation and browser verification now pass; the local demo video is ready for student review; assessed commit and instructor access remain pending.
+
+## Project access and startup
+
+Repository: [milestudor/expedia_project](https://github.com/milestudor/expedia_project). Branch: `rag_integration`. Assessed Part 2 commit: **pending manual student review and authorization**. New artifacts are currently local; instructor access to final published links is not yet verified. Root `report.md` remains Part 1; this file is the draft to use for the separate Part 2 submission.
+
+Follow [README](../../README.md) startup instructions. Set GEOAPIFY_API_KEY and privately add `OPEN_AI` to the ignored root `.env`; model `OPENAI_MODEL=gpt-5.6-luna` was chosen from the class instructions. No new dependencies were installed. Restart after configuration/prompt edits and from the project root run `backend/.venv/bin/python -m backend.app.model_preflight` without generation. API credit/model access remains the student's account requirement.
+
+## Research and early design
+
+[Current research, source citations, schema/JOIN explanation and implementation](../rag-context.md). Official OpenAI model/Responses/conversation-state documentation was checked October 6. The earlier free OpenRouter proposal was replaced when the student supplied the activity requiring OpenAI. Existing httpx avoids a dependency installation. SQLite compiler authorization, a read-only connection and execution limits enforce the model-query boundary independently of prompt instructions.
+
+![Early chatbot design](chatbot-mockup.svg)
+
+The mockup was created before initial implementation. The final design adds canonical nightly records, persistent user/assistant messages, a saved-conversation selector and a durable trace. Approved raw JOIN queries with named parameters now implement the class example; backend canonical stay calculations retain multi-night correctness. Actual ZIP column is postcode rather than the recording's zip.
+
+## Recorded demonstration
+
+[Part 2 RAG demo — 81-second WebM](part-2-rag-demo.webm). Agent-run browser screen capture, silent, approximately one frame per second, with pauses between recording steps removed; footer labels live calls and isolated mock rejection. Local review link only until publication. [Updated demo script](demo-script.md). Mock screenshots do not replace the required real two-model-request demonstration.
+
+## Verification
+
+[Full expected-versus-observed record](../rag-context.md): **133 backend tests, 39 frontend tests, clean lint and successful build.** New checks include greetings, parameterized JOIN retrieval, bounded follow-up context, failed proposals/second calls saved without fake replies, pending-turn recovery, persistence after refresh/restart, and original-table preservation. Existing sample/ZIP/provider/list-map and local-save/removal/restart regressions pass.
+
+[Fixed JSON input](chat-fixture.json), [current exported mock conversation](rag-conversation-evidence.json), [schema/rows preservation](rag-schema-preservation.json). Current browser mock screenshots: [class success](rag-class-success-mock.png), [follow-up](rag-followup-mock.png), [history](rag-history-mock.png), [no match](rag-no-match-mock.png), [rejection](rag-rejected-mock.png). IDs, timestamps, SQL, parameters, retrieved records, answer and errors are in the export. Live model gpt-5.6-luna was checked October 6, 2026: ZIP 16802 October 10–12 retrieved $5 + $100 = $105; October 12 follow-up retrieved $100; ZIP 00000 returned no records. See [live initial trace](rag-live-initial-evidence.json), [final live trace](rag-live-evidence.json), [live success](rag-live-success.png), [live no match](rag-live-no-match.png), and [unchanged original tables](rag-live-preservation.json). Both model stages and intervening retrieval are logged.
+
+The October6 initial live verification preserved all original tables/rows. The student subsequently removed and re-saved the hotel; current demo nightly rates are $100 each. No original Assignment1 tables were changed by the chatbot. Added chat logging is application-owned; model retrieval cannot read/write conversation tables or mutate hotels. Mock provider errors avoid intentional quota exhaustion.
+
+## AI disclosure and evidence
+
+Codex, a GPT-6-based coding agent, used the OpenAI Docs skill and official web documentation for API/model research; implemented the prompt, backend service/history/controller, Vue conversation UI and tests; and performed local/browser verification. The exact Codex app model variant is not exposed in this chat configuration and must be recorded from the student's app settings before final submission.
+
+Application model selected: **OpenAI gpt-5.6-luna**. The student configured OPEN_AI privately; actual live OpenAI requests were made and grounded answers compared to SQLite. No credentials are included in evidence. Fixed model outputs and fixture-server replies are explicitly labeled mocks and never production fallbacks.
+
+[Selected prompts and revisions](../../prompts/selected.md). New runtime system prompt is [hotel-assistant.md](../../prompts/hotel-assistant.md); its hash and text are saved for each turn. User supplied the seven refined activity requirements, including “Save records as each step occurs, including failed attempts.” This led to committed per-stage logging separate from read-only retrieval and explicit interrupted-turn recovery.
+
+Revised approach: the initial implementation was stateless and kept the prompt in code, so it did not meet the newly supplied activity's follow-up/history requirements. It was replaced with the loaded prompt and persisted trace. The initial fixture copied an under-$250 filter into a class question that did not ask for a budget; it was corrected before the final class screenshot/export. These are mock/design revisions, not model-generated live evidence.
+
+Before submission, review the new demo/report, complete remaining manual observations, then add the authorized assessed commit and instructor-accessible artifact links. Keep keys/private account information out of reports and recordings. Do not commit/push until the student reviews changes and browser results.
+
+Live revisions: the first proposal added an unsupported top-level nights field; strict validation rejected it before SQL. The prompt now specifies exact keys. A later GROUP_CONCAT proposal was rejected by the function allowlist; the prompt now requests hotel_id only and lists allowed functions. Running verification while a live request was pending exposed database recovery occurring during app import; recovery now runs only at server lifespan startup. The initial trace retains the resulting spurious interruption message and subsequent successful answer rather than hiding it. Regression tests verify app construction preserves pending turns and actual startup recovers them.
+
+
+## October 6 — student empty-storage retest correction
+
+Student screenshots at 20:48–20:51 UTC showed empty results for the first two questions. Direct read-only inspection found saved_hotels, saved_hotel_zips and demo_hotel_nights all empty. Saved proposal logs use the correct ZIP, cents budget and dates; empty results are genuine, not a retrieval regression. Prior expected $105/$100 values were conditional on the saved hotel and manual $5 nightly edit remaining. No deleted hotel/rates were restored. Re-saving provider hotel seeds default $100 nightly rates for Oct10–14: two-night expected $200, Oct12 expected $100, Oct14–16 incomplete because Oct15 missing.
+
+Adjustment: second LLM receives saved_hotel_count, with instructions to distinguish empty storage from filtered no-match; frontend shows explicit Add to Local guidance for zero saved hotels. General empty-filter feedback no longer implies all dated records are absent. Regression tests prove the count reaches the second call and empty inventory is not mutated, and verify frontend guidance. Verification: 133 backend / 38 frontend tests, lint/build pass. Live empty-storage evidence in docs/assignment-2-part-2/rag-empty-storage-live.json. Historical successful traces remain labeled with their earlier data state. No dependency change, commits or pushes.
+
+
+October 8 presentation/manual-review update: assistant display removes Markdown bold/backticks, replaces long provider IDs and wraps long text; raw saved messages and workflow evidence remain intact and HTML stays escaped. Runtime answer prompt requests plain text and names instead of provider IDs. Added docs/assignment-2-part-2/manual-review.md with unfilled student observations, report review and labeled student-run rejection checks. Student manual verification is pending; agent cannot certify it on the student’s behalf. No dependencies installed or commits/pushes.
+
+Student action: complete [manual verification and report review](manual-review.md) yourself. This checklist remains unfilled; agent checks do not establish student review. Latest agent checks: 133 backend tests, 39 frontend tests, lint/build pass; browser confirmed existing saved answers cleaned without changing raw evidence. [Agent presentation screenshot](chat-readable-oct8.png).
+
+
+## October 8 final demo and student review
+
+Codex model confirmed by student: GPT-6.1 Sol. Application calls: OpenAI gpt-5.6-luna. Student states they read the report and performed ZIP searches and the chatbot question series. [Manual review record](manual-review.md) includes student-supplied screenshots and marks unconfirmed checks as pending; agent checks are separate. Student review must be repeated for these final edits/video.
+
+[Current live recording trace](demo-live-trace-oct8.json): ZIP16802 Oct10–12, one room, under$250, returns Nittany Lion Inn with two $100 nights, $200 total, minimum20 rooms; Oct12 follow-up returns $100/20 rooms; ZIP00000 returns []. These calls ran October8 at 19:41–19:43 UTC. The video shows proposed SQL, checked/bounded retrieval, records sent to the second request, displayed answer, follow-up, no-match and refresh restoration. The saved trace provides both request payloads/stages.
+
+[Mock rejection trace and before/after SQLite evidence](demo-rejection-trace-oct8.json): fixed DELETE proposal is rejected; all isolated hotel tables remain equal. MOCK MODEL is explicitly separated from live calls. This fixture does not access the real hotel DB or remote provider. Earlier local-storage verification/screenshots remain supplemental; this video does not show every save/removal/restart check.
+
+The video is approximately2.8 MB and can be committed normally. Repository URL is verified from the Git remote; final publication/access/assessed SHA cannot be verified before the authorized commit/push. Relative links must be replaced or resolved to published instructor-accessible URLs before uploading this standalone report to Canvas. No commits, pushes, uploads or submission have been performed.

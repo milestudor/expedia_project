@@ -1,0 +1,29 @@
+{
+  "mode": "rag",
+  "question": "Which saved hotels in ZIP 16802 have one room from October 10 to October 12, 2026, for under $250 total?",
+  "proposed_sql": "SELECT h.hotel_id FROM saved_hotels h JOIN saved_hotel_zips z ON z.hotel_id=h.hotel_id JOIN demo_hotel_nights n ON n.hotel_id=h.hotel_id WHERE z.postcode=:postcode AND n.stay_date>=:check_in AND n.stay_date<:check_out GROUP BY h.hotel_id HAVING COUNT(n.stay_date)=:nights AND MIN(n.rooms_available)>=:rooms AND SUM(n.nightly_rate_cents)*:rooms<:budget_cents ORDER BY SUM(n.nightly_rate_cents), h.hotel_id LIMIT 20",
+  "executed_sql": "SELECT DISTINCT hotel_id FROM (SELECT h.hotel_id FROM saved_hotels h JOIN saved_hotel_zips z ON z.hotel_id=h.hotel_id JOIN demo_hotel_nights n ON n.hotel_id=h.hotel_id WHERE z.postcode=:postcode AND n.stay_date>=:check_in AND n.stay_date<:check_out GROUP BY h.hotel_id HAVING COUNT(n.stay_date)=:nights AND MIN(n.rooms_available)>=:rooms AND SUM(n.nightly_rate_cents)*:rooms<:budget_cents ORDER BY SUM(n.nightly_rate_cents), h.hotel_id LIMIT 20) LIMIT 21",
+  "parameters": {
+    "postcode": "16802",
+    "budget_cents": 25000,
+    "check_in": "2026-10-10",
+    "check_out": "2026-10-12",
+    "nights": 2,
+    "rooms": 1
+  },
+  "stay": {
+    "check_in": "2026-10-10",
+    "check_out": "2026-10-12",
+    "rooms": 1
+  },
+  "records": [],
+  "truncated": false,
+  "answer": "No hotels are currently saved locally. Search ZIP **16802** in the hotel search above and select **Add to Local**, then ask again.\n\nRates and room availability are simulated course data, not live quotes.",
+  "model": "gpt-5.6-luna",
+  "source": "live-model",
+  "saved_hotel_count": 0,
+  "conversation_id": "9da373cf-fb01-4716-ba90-420be759ed78",
+  "turn_id": "fa7e59f0-0def-45ce-8b12-20cdf17fa231",
+  "prompt_version": "56290f7aa2ce513742c7a69d22004e810c34099b4a9cfbc80b573a009cccd054",
+  "simulated_course_data": true
+}

@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { afterEach, expect, it, vi } from 'vitest'
+import { beforeEach, afterEach, expect, it, vi } from 'vitest'
 import HotelDiscovery from './HotelDiscovery.vue'
 
 const hotels = [
@@ -9,7 +9,19 @@ const hotels = [
 const data = { center: { postcode: '02108', latitude: 42.36, longitude: -71.06 }, hotels, limit: 50 }
 const create = () => mount(HotelDiscovery, { global: { stubs: { HotelMap: { name: 'MapStub', props: ['selectedId'], template: '<button class="map-test" @click="$emit(\'select\', \'second\')">Map</button>' } } } })
 const response = (body, status = 200) => ({ ok: status === 200, status, json: async () => body })
-afterEach(() => vi.unstubAllGlobals())
+// Legacy Part 1 checks run after a successful empty local lookup.
+const rawStub = vi.stubGlobal.bind(vi)
+beforeEach(() => {
+  vi.spyOn(vi, 'stubGlobal').mockImplementation((name, mock) => {
+    if (name !== 'fetch') return rawStub(name, mock)
+    return rawStub(name, (url, options) => {
+      if (url.startsWith('/api/local-hotels?postcode=')) return Promise.resolve(response({ hotels: [] }))
+      if (url === '/api/local-hotels/status') return Promise.resolve(response({ saved_ids: [] }))
+      return options === undefined ? mock(url) : mock(url, options)
+    })
+  })
+})
+afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks() })
 
 it('preserves leading zeros, renders honest fields, and synchronizes selections both ways', async () => {
   const fetch = vi.fn().mockResolvedValue(response(data))

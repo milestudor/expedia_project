@@ -1,0 +1,23 @@
+{
+  "label": "Real local database schema/row preservation check; no provider calls",
+  "observation_date": "2026-10-06",
+  "unchanged_existing_tables": {
+    "bookings": true,
+    "demo_hotel_nights": true,
+    "hotels": true,
+    "id_sequences": true,
+    "saved_hotel_zips": true,
+    "saved_hotels": true,
+    "saved_zip_contexts": true,
+    "trips": true,
+    "users": true
+  },
+  "new_application_owned_tables": [
+    "chat_conversations",
+    "chat_turns",
+    "chat_messages"
+  ],
+  "key_configured": false,
+  "chat_turns_after_normal_missing_key_check": 1,
+  "note": "Only application-owned chat logging changed after the normal browser configuration-failure check; no remote generation was made."
+}

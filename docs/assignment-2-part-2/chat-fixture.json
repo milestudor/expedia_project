@@ -1,0 +1,15 @@
+{
+  "label": "MOCK MODEL OUTPUTS \u2014 not live provider evidence; temporary SQLite hotel and rates are fixtures",
+  "question": "Which saved hotels in ZIP 16802 have one room October 10 to October 12, 2026 for under $250 total?",
+  "proposal": {
+    "sql": "SELECT h.hotel_id FROM saved_hotels h JOIN saved_hotel_zips z ON z.hotel_id=h.hotel_id JOIN demo_hotel_nights n ON n.hotel_id=h.hotel_id WHERE z.postcode=:postcode AND n.stay_date>=:check_in AND n.stay_date<:check_out GROUP BY h.hotel_id HAVING COUNT(n.stay_date)=:nights AND MIN(n.rooms_available)>=:rooms AND SUM(n.nightly_rate_cents)*:rooms<:budget ORDER BY SUM(n.nightly_rate_cents), h.hotel_id LIMIT 3",
+    "check_in": "2026-10-10",
+    "check_out": "2026-10-12",
+    "rooms": 1,
+    "parameters": {
+      "postcode": "16802",
+      "budget": 25000
+    }
+  },
+  "answer": "Fixture Inn (fixture-hotel) has one room for October 10\u201312, 2026, checkout excluded. The simulated course total is $105: $5 for October 10 and $100 for October 11. At least 20 simulated rooms are recorded each night. It matches the under-$250 budget. These are simulated course rates and availability, not live quotes."
+}

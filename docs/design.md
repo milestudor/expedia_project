@@ -103,3 +103,11 @@ Research, early mockup and verification: [Part 1 research](assignment-2-part-1/r
 ### Review correction: return navigation
 
 Student review identified that Sample stays had no visible route back to live discovery. Added a keyboard-accessible “← ZIP hotel search” header link to `/`, keeping the booking-history anchor and wrapping navigation on narrow screens. Navigation returns to the initial ZIP search form.
+
+## Revised Assignment 2 Part 2 (October 6 checkpoint)
+
+The discovery view is preserved and a separate `HotelChat.vue` section handles natural-language request states and renders escaped model answers with canonical hotel/night evidence. FastAPI validates and maps errors. `hotel_chat.py` owns the two model calls, proposal validation and read-only SQLite retrieval; `model_preflight.py` performs read-only catalog/quota checks. A temporary retrieval view enforces complete nightly coverage, checkout exclusion and full totals before model SQL filters hotel IDs. Storage and original tables remain intact. See [Part 2 research/design/verification](assignment-2-part-2/rag.md) and [early mockup](assignment-2-part-2/chatbot-mockup.svg). Live model evidence remains pending.
+
+## Supplied RAG-context activity — current implementation
+
+OpenAI/gpt-5.6-luna replaces provisional OpenRouter. prompts/hotel-assistant.md is loaded at startup and hashed in each trace. chat_history.py stores messages and per-stage records separately from read-only model retrieval. Vue displays saved user/assistant exchanges, errors, conversation selection and durable traces; follow-ups receive bounded successful context and retrieve fresh nights. Model proposals may use approved local hotel JOINs with bound parameters; canonical calculations still enforce complete nightly coverage. See [current schema, API, verification and live limitations](rag-context.md). Final checks: 132 backend/37 frontend tests, clean lint/build. Live key and generation remain pending.

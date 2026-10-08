@@ -2,17 +2,23 @@ from __future__ import annotations
 
 import csv
 import sqlite3
-from contextlib import contextmanager
+from contextlib import contextmanager, asynccontextmanager
 from datetime import date, datetime, timezone
 from decimal import Decimal
 from pathlib import Path
+from uuid import UUID
 from typing import Iterator, Literal
 
 from fastapi import FastAPI, HTTPException, Query, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from .local_hotels import SaveHotel, HotelIds, save_hotel, get_saved_hotels, remove_hotel
 from pydantic import BaseModel
 
 from .hotel_search import find_hotels
+from .hotel_chat import ChatQuestion, ChatError, answer_question, load_assistant_prompt
+from .migrations import migrate_saved_hotels, migrate_chat_history
+from .chat_history import HistoryError, list_conversations, load_conversation, recover_pending
 from .config import geoapify_key_status
 from .zip_lookup import ZipConfigurationError, ZipLookupError, lookup_zip
 
@@ -125,6 +131,8 @@ def initialize_database(database: Path) -> None:
         connection.execute(
             "INSERT OR IGNORE INTO id_sequences VALUES ('booking', ?)", (maximum + 1,)
         )
+        migrate_saved_hotels(connection)
+        migrate_chat_history(connection)
 
 
 def _stay_from_row(row: sqlite3.Row) -> Stay:
@@ -144,8 +152,16 @@ def _booking_from_row(row: sqlite3.Row) -> Booking:
 
 
 def create_app(database: Path = DEFAULT_DATABASE) -> FastAPI:
+    load_assistant_prompt()
     initialize_database(database)
-    application = FastAPI(title="Expedia Lite API", version="2.0.0")
+    @asynccontextmanager
+    async def lifespan(_application):
+        # Importing or initializing a database is not a server restart.
+        with _database(database) as connection:
+            recover_pending(connection)
+        yield
+
+    application = FastAPI(title="Expedia Lite API", version="2.0.0", lifespan=lifespan)
     application.add_middleware(
         CORSMiddleware,
         allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -153,9 +169,62 @@ def create_app(database: Path = DEFAULT_DATABASE) -> FastAPI:
         allow_headers=["*"],
     )
 
+    @application.exception_handler(sqlite3.Error)
+    async def storage_error(_request, _error):
+        return JSONResponse(status_code=503, content={"detail": "Local storage is unavailable. Please try again."})
+
+    @application.get("/api/local-hotels")
+    def local_hotels(postcode: str = Query(pattern=r"^[0-9]{5}$")):
+        with _database(database) as connection:
+            return get_saved_hotels(connection, postcode)
+
+    @application.post("/api/local-hotels/status")
+    def local_status(request: HotelIds):
+        with _database(database) as connection:
+            saved = [hotel_id for hotel_id in request.place_ids if connection.execute(
+                "SELECT 1 FROM saved_hotels WHERE hotel_id=?", (hotel_id,)
+            ).fetchone()]
+        return {"saved_ids": saved}
+
+    @application.post("/api/local-hotels")
+    def save_local_hotel(request: SaveHotel):
+        with _database(database) as connection:
+            save_hotel(connection, request)
+        return {"place_id": request.hotel.place_id, "saved": True}
+
+    @application.delete("/api/local-hotels", status_code=204, response_class=Response)
+    def delete_local_hotel(hotel_id: str = Query(min_length=1)):
+        with _database(database) as connection:
+            remove_hotel(connection, hotel_id)
+        return Response(status_code=204)
+
     @application.get("/api/health")
     def health() -> dict[str, str]:
         return {"status": "ok", "geoapify": geoapify_key_status()}
+
+    @application.post("/api/hotel-chat")
+    def hotel_chat(request: ChatQuestion):
+        if len(request.question.strip()) < 2:
+            raise HTTPException(status_code=422, detail="Enter a hotel question.")
+        try:
+            return answer_question(database, request.question.strip(),
+                                   str(request.conversation_id) if request.conversation_id else None)
+        except ChatError as error:
+            return JSONResponse(status_code=error.status, content={"detail": str(error),
+                "conversation_id": error.conversation_id})
+        except HistoryError as error:
+            raise HTTPException(status_code=error.status, detail=str(error)) from None
+
+    @application.get("/api/hotel-chat/conversations")
+    def chat_conversations():
+        return {"conversations": list_conversations(database)}
+
+    @application.get("/api/hotel-chat/conversations/{conversation_id}")
+    def chat_conversation(conversation_id: UUID):
+        try:
+            return load_conversation(database, str(conversation_id))
+        except HistoryError as error:
+            raise HTTPException(status_code=error.status, detail=str(error)) from None
 
     @application.get("/api/demo/zip-location")
     def demo_zip_location(postcode: str = Query(default="")) -> dict[str, str | float]:

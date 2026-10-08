@@ -1,0 +1,14 @@
+{
+  "original_tables_unchanged": {
+    "bookings": true,
+    "demo_hotel_nights": true,
+    "hotels": true,
+    "id_sequences": true,
+    "saved_hotel_zips": true,
+    "saved_hotels": true,
+    "saved_zip_contexts": true,
+    "trips": true,
+    "users": true
+  },
+  "all_unchanged": true
+}

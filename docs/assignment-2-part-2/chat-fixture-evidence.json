@@ -1,0 +1,144 @@
+{
+  "label": "MOCK MODEL EVIDENCE \u2014 not successful live model calls",
+  "observation_date": "2026-10-06",
+  "success": {
+    "question": "Which saved hotels in ZIP 16802 have one room October 10 to October 12, 2026 for under $250 total?",
+    "proposed_sql": "SELECT hotel_id FROM hotel_stay_options WHERE postcode='16802' AND available=1 AND total_cost_cents<25000 ORDER BY total_cost_cents",
+    "executed_sql": "SELECT DISTINCT hotel_id FROM (SELECT hotel_id FROM hotel_stay_options WHERE postcode='16802' AND available=1 AND total_cost_cents<25000 ORDER BY total_cost_cents) LIMIT 21",
+    "stay": {
+      "check_in": "2026-10-10",
+      "check_out": "2026-10-12",
+      "rooms": 1
+    },
+    "records": [
+      {
+        "hotel_id": "fixture-hotel",
+        "name": "Fixture Inn",
+        "address": null,
+        "postcode": "16802",
+        "locality": "State College",
+        "recorded_nights": 2,
+        "expected_nights": 2,
+        "total_cost_cents": 10500,
+        "minimum_rooms": 20,
+        "available": 1,
+        "postcodes": [
+          "16802"
+        ],
+        "check_in": "2026-10-10",
+        "check_out": "2026-10-12",
+        "rooms_requested": 1,
+        "simulated_course_data": true,
+        "nightly_records": [
+          {
+            "stay_date": "2026-10-10",
+            "nightly_rate_cents": 500,
+            "rooms_available": 20
+          },
+          {
+            "stay_date": "2026-10-11",
+            "nightly_rate_cents": 10000,
+            "rooms_available": 20
+          }
+        ]
+      }
+    ],
+    "truncated": false,
+    "answer": "Fixture Inn (fixture-hotel) has one room for October 10\u201312, 2026, checkout excluded. The simulated course total is $105: $5 for October 10 and $100 for October 11. At least 20 simulated rooms are recorded each night. It matches the under-$250 budget. These are simulated course rates and availability, not live quotes.",
+    "model": "fixed JSON, no remote model",
+    "source": "MOCK MODEL; real temporary SQLite retrieval",
+    "simulated_course_data": true,
+    "model_requests": [
+      {
+        "phase": "query",
+        "payload": {
+          "question": "Which saved hotels in ZIP 16802 have one room October 10 to October 12, 2026 for under $250 total?"
+        }
+      },
+      {
+        "phase": "answer",
+        "payload": {
+          "question": "Which saved hotels in ZIP 16802 have one room October 10 to October 12, 2026 for under $250 total?",
+          "records": [
+            {
+              "hotel_id": "fixture-hotel",
+              "name": "Fixture Inn",
+              "address": null,
+              "postcode": "16802",
+              "locality": "State College",
+              "recorded_nights": 2,
+              "expected_nights": 2,
+              "total_cost_cents": 10500,
+              "minimum_rooms": 20,
+              "available": 1,
+              "postcodes": [
+                "16802"
+              ],
+              "check_in": "2026-10-10",
+              "check_out": "2026-10-12",
+              "rooms_requested": 1,
+              "simulated_course_data": true,
+              "nightly_records": [
+                {
+                  "stay_date": "2026-10-10",
+                  "nightly_rate_cents": 500,
+                  "rooms_available": 20
+                },
+                {
+                  "stay_date": "2026-10-11",
+                  "nightly_rate_cents": 10000,
+                  "rooms_available": 20
+                }
+              ]
+            }
+          ],
+          "truncated": false,
+          "check_in": "2026-10-10",
+          "check_out": "2026-10-12",
+          "rooms_requested": 1
+        }
+      }
+    ]
+  },
+  "no_match": {
+    "question": "Which hotels in 00000 October 10 to 12, 2026?",
+    "proposed_sql": "SELECT hotel_id FROM hotel_stay_options WHERE postcode='00000'",
+    "executed_sql": "SELECT DISTINCT hotel_id FROM (SELECT hotel_id FROM hotel_stay_options WHERE postcode='00000') LIMIT 21",
+    "stay": {
+      "check_in": "2026-10-10",
+      "check_out": "2026-10-12",
+      "rooms": 1
+    },
+    "records": [],
+    "truncated": false,
+    "answer": "MOCK MODEL: No matching local records were retrieved. Rates and availability are simulated course data.",
+    "model": "fixed JSON, no remote model",
+    "source": "MOCK MODEL; real temporary SQLite retrieval",
+    "simulated_course_data": true,
+    "model_requests": [
+      {
+        "phase": "query",
+        "payload": {
+          "question": "Which hotels in 00000 October 10 to 12, 2026?"
+        }
+      },
+      {
+        "phase": "answer",
+        "payload": {
+          "question": "Which hotels in 00000 October 10 to 12, 2026?",
+          "records": [],
+          "truncated": false,
+          "check_in": "2026-10-10",
+          "check_out": "2026-10-12",
+          "rooms_requested": 1
+        }
+      }
+    ]
+  },
+  "rejected_query": {
+    "proposed_sql": "DELETE FROM saved_hotels",
+    "status": 422,
+    "message": "Proposed query rejected: only one allowed SELECT is permitted.",
+    "database_bytes_unchanged": true
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "database": "/Users/milestudor/Documents/ChatGPT/expedia_project/backend/data/expedia_lite.db",
+  "hotel": "Nittany Lion Inn",
+  "searched_zip": "16802",
+  "before": {
+    "hotel_id": "51cb0b40dbbb7753c059106e8d4a02664440f00101f90187b00800000000009203104e697474616e79204c696f6e20496e6e",
+    "stay_date": "2026-10-10",
+    "nightly_rate_cents": 10000,
+    "rooms_available": 20
+  },
+  "after": {
+    "hotel_id": "51cb0b40dbbb7753c059106e8d4a02664440f00101f90187b00800000000009203104e697474616e79204c696f6e20496e6e",
+    "stay_date": "2026-10-10",
+    "nightly_rate_cents": 500,
+    "rooms_available": 10
+  },
+  "other_records_unchanged": true,
+  "method": "Direct SQLite transaction committed by agent at user request; not a DB Browser UI edit"
+}
